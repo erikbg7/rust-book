@@ -37,3 +37,29 @@ rustc hello_world.rs
 ```
 After compiling successfully, Rust outputs a binary executable.
 
+## Cargo
+Cargo is Rust’s build system and package manager. Most Rustaceans use this tool to manage their Rust projects because Cargo handles a lot of tasks for you, such as building your code, downloading the libraries your code depends on, and building those libraries (dependencies).
+
+Check Cargo version
+```
+cargo --version
+```
+
+Init a new project called `hello_cargo`
+
+```
+cargo new hello_cargo
+cd hello_cargo
+```
+
+Init a Cargo project in an existing directory
+```
+cargo init
+```
+
+It will create a `Cargo.toml` file.
+The last line in the new file, [dependencies], is the start of a section for you to list any of your project’s dependencies.
+In Rust, packages of code are referred to as crates.
+
+
+You cannot mutate something if you do nnot own it.
