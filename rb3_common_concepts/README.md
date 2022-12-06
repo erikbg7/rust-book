@@ -98,14 +98,116 @@ isize and usize types depend on the architecture of the computer your program is
         let element = arr[index]; // runtime error: index out of bounds: the len is 5 but the index is 10
     ```
 
+----
+
+## Functions
+
+Rust doesn’t care where you define your functions, only that they’re defined somewhere in a scope that can be seen by the caller.
+
+### *Statements*
+Perform some action and do not return a value.
+
+### *Expressions*
+Evaluate to a resulting value.
+
+- Calling a function, a macro or creating a new scope block with curly brackets are expressions.
+- Expressions do not include ending semicolons.
+- Adding a semicolon turns the expression into an statement.
+
+```rust
+let y = {
+        let x = 3;
+        x + 1 // missing ; will make this an expression that will return the value
+    }; // y will be assigned 4
+```
+
+### *Return Values*
+
+- We have to use `->` to specify the return type of a function.
+
+```rust
+fn five() -> i32 {/**/}
+```
 
 
+----
 
+## Control Flow
 
+### *if expression*
 
+- The condition must be a `bool`.
+- Does not automatically convert non-boolean types to a boolean. (JS, Ruby, Python, etc. do this)
+- Not recommended to have multiple `else if` blocks. Use `match` instead.
 
+```rust
+if condition1 {
+    // do something
+} else if condition2 {
+    // do something else
+} else {
+    // do something else
+}
+```
 
+```rust
+  // if is an expression
+  let number = if true { 5 } else { 6 }; // number will be 5
+```
 
+### *loop expression*
+
+- A value can be returned after breaking the loop.
+- loops can be labeled, we can use the label to break the loop.
+
+```rust
+let mut counter = 0;
+
+let result = loop {
+    counter += 1;
+
+    if counter == 10 {
+        break counter * 2; // break with a value
+    }
+};
+println!("The result is {result}"); // result will be 20
+```
+
+```rust
+'counter_loop': loop {
+    if counter == 10 {
+        break 'counter_loop'
+    }
+};
+```
+
+### *while expression*
+
+- Its nice but bug-prone.
+- For example, if you changed the definition of the a array to have four elements but forgot to update the condition to while index < 4, the code would panic.
+- It's also SLOW,the **compiler adds runtime code to perform the conditional check of whether the index is within the bounds of the array on every iteration** through the loop.
+
+ ```rust
+while index < 5 {
+    // do something
+}
+ ```
+
+### *for expression*
+```rust
+    let a = [10, 20, 30, 40, 50];
+
+    // Looping an array 
+    for element in a {
+        println!("the value is: {element}");
+    }
+
+    // Looping a range
+    for number in (1..4).rev() {
+        println!("{number}!");
+    }
+
+```
 
 
 
