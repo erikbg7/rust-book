@@ -24,4 +24,27 @@ fn main() {
     assert_eq!(generate_nth_fibonnaci(4), 3);
     assert_eq!(generate_nth_fibonnaci(5), 5);
     assert_eq!(generate_nth_fibonnaci(8), 21);
+
+    // Generate The Twelve Days of Christmas song.
+    const ITEMS: [&str; 12] = [
+        "a partridge in a pear tree",
+        "two turtle doves",
+        "three French hens",
+        "four calling birds",
+        "five gold rings",
+        "six geese a-laying",
+        "seven swans a-swimming",
+        "eight maids a-milking",
+        "nine ladies dancing",
+        "ten lords a-leaping",
+        "eleven pipers piping",
+        "twelve drummers drumming",
+    ];
+
+    for day in 1..=12 {
+        println!("\nOn the {} day of Christmas my true love sent to me", day);
+        for i in 1..=day {
+            println!("{}", ITEMS[day - i]);
+        }
+    }
 }
