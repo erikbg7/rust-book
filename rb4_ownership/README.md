@@ -393,7 +393,10 @@ assert_eq!(slice, &[2, 3]);
 
 
 ----
+ 
+## Another Nice Interpretation
 
+```rust
 let item = [1,2]
 fn do_something(item) // value is "consumed" and gone after using it
 
@@ -402,30 +405,5 @@ let item = [1,2]
 fn do_something(&item) // inmutable reference to the value, value is only referenced, not consumed
 
 let mut item = [1,2]
-
-fn do_something(& mut item) // mutable reference, value is can be mutated
-
-
-
-
-# Learn Rust
-- 3,4 CLI apps
-- 3,4 servers
-
-https://github.com/agarrharr/awesome-cli-apps#image-conversion
-
-# CLI tool project number 1
-https://github.com/svg/svgo
-- should be able to conver a single image, an array of image files, or a directory of images from JPG, PNG, etc. to WEBP
-
-
-CLI usage
-# Processing single files:
-svgo one.svg two.svg -o one.min.svg two.min.svg
-# Processing directory of svg files, recursively using `-f`, `--folder` :
-svgo -f ./path/to/folder/with/svg/files -o ./path/to/folder/with/svg/output
-# Help for advanced usage
-svgo --help
-
-
-
+fn do_something(& mut item) // mutable reference, value can be mutated
+```
