@@ -14,6 +14,25 @@ fn main() {
     }
 
     let m = Message::Write(String::from("Any string"));
+    m.call();
 
-    m.call()
+    //////////////
+    // Option Test
+    //////////////
+
+    let num1 = 30;
+    let num2: Option<i32> = Some(30);
+
+    // let sum = num1 + num2; // cannot sum i32 and Option<i32>
+
+    let sum_unwrapped = num1 + num2.unwrap();
+    // println!("num2 {}", num2); // num2 is consumed by unwrap
+
+    let sum_match = match num2 {
+        Some(n) => num1 + n,
+        None => num1,
+    };
+
+    assert_eq!(sum_unwrapped, 60);
+    assert_eq!(sum_match, 60);
 }

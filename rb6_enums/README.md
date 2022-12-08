@@ -71,3 +71,34 @@ enum Message {
 }
 ```
 
+## Option Enum
+
+- scenarios where `a value could be something or nothing`
+- Rust does not have `null`
+- Rust represents the value of null through the `Option` enum
+
+```rust
+enum Option<T> {  // T is a generic type parameter
+    None, // no value
+    Some(T), // some value
+}
+```
+
+```rust
+    let x: i8 = 5;
+    let y: Option<i8> = Some(5);
+
+    let sum = x + y; // BIG FAIL
+```
+
+We cannot directly add a `i8` to an `Option<i8>`.
+If we wanna use the Option value we have to handle explicitly the `None` case.
+
+```rust
+    let x: i8 = 5;
+    let y: Option<i8> = Some(5);
+
+    let sum = x + y.unwrap(); // unwrap() returns the value inside the Some variant
+```
+
+
