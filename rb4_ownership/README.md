@@ -148,7 +148,150 @@ Some types that are Copy:
 
 ----
 
+## Ownership and Functions
 
+- Passing a variable to a  is similar to assigning a value to a variable.
+
+```rust
+fn main() {
+    let s = String::from("hello");  // s comes into scope
+    takes_ownership(s);             // s's value is moved to the function, no longer valid here
+
+    // using s at this point would throw a compile-time error, value was moved to the function
+
+    let x = 5;                      // x comes into scope
+    makes_copy(x);                  // x would move into the function as a copy, we can use it afterward,
+}
+
+fn takes_ownership(text: String) { // text comes into scope
+    println!("{}", text);
+} // text goes out of scope: `drop` is called and memory us freed
+
+fn makes_copy(number: i32) { // number comes into scope
+    println!("{}", number);
+} // number goes out of scope. Nothing special happens.
+```
+
+----
+
+## Return Values and Scope
+
+- Return values can also transfer ownership.
+
+
+```rust
+fn main() {
+    let s1 = gives_ownership(); // gives_ownership moves its return value into s1
+
+    let s2 = String::from("hello"); // s2 comes into scope
+    let s3 = takes_and_gives_back(s2);  // s2 is moved into function, which return value into s3
+} // s1 out of scoped -> droped, s3 out of scope -> droped, s2 moved, nothing happens
+
+fn gives_ownership() -> String { // moves its return value into the function that calls it
+    let text = String::from("yours"); // text comes into scope
+    text                              // text is returned and moved out to the calling function
+}
+
+fn takes_and_gives_back(a_string: String) -> String { // a_string comes into scope
+    a_string  // a_string is returned and moves out to the calling function
+}
+```
+
+The ownership of a variable follows the same pattern everytime:
+- assigning a valuea to a variable moves it
+- heap data will cleaned up by drop when the variable goes out of scope
+- to avoid dropping it, the ownership must be moved to another variable
+
+Having to do this everytime is tedious, so Rust has a feature called *references*.
+
+----
+
+## References and Borrowing
+
+- `& is the reference operator`
+- Using references we can refer to a value without taking ownership of it.
+- A reference is like a pointer to data owned by another varible.
+- If we do not own the value, `we cannot mutate it`
+- `* is the dereference operator, has the opposite effect`
+
+```rust
+fn main() {
+    let s1 = String::from("hello");
+    let len = calculate_length(&s1);
+
+    println!("The length of '{}' is {}.", s1, len);
+}
+
+fn calculate_length(s: &String) -> usize { // s is a reference to a String
+    s.len()
+} // as it is only a reference, the value is not dropped
+```
+
+### Mutable References
+
+- To be able to mutate a borrowed value we have to use a `mutable reference`
+- Written as `&mut String`
+
+```rust
+fn main() {
+    let mut s = String::from("hello");
+
+    change(&mut s);
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
+}
+```
+
+There is one restriction tho:
+
+*You can only have a SINGLE mutable reference at the same time*
+
+- We can not borrow a value as mutable more than one.
+- The benefit is that we  can prevent data races at compile time.
+
+```rust
+    let mut s = String::from("hello");
+    let r1 = &mut s;
+    let r2 = &mut s; // BIG FAIL
+    // error[E0499]: cannot borrow `s` as mutable more than once at a time
+```
+
+A `data race` could happen if:
+- Two or more pointers access the same data at the same time.
+- At least one of the pointers is being used to write to the data.
+- There’s no mechanism being used to synchronize access to the data.
+
+
+We can use scopes to have multiple mutable references, but no simultaneous ones.
+
+
+```rust
+    let mut s = String::from("hello");
+    {
+        let r1 = &mut s;
+    } // r1 goes out of scope here, so we can make a new reference.
+
+    let r2 = &mut s;
+```
+
+There is a similar rule for working with mutable and immutable reference at the same time:
+
+```rust
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    let r3 = &mut s; // BIG PROBLEM
+
+    println!("{}, {}, and {}", r1, r2, r3);
+```
+- users of an immutable reference do not expect the value to suddenly change from under them.
+- if r1 and r2 were used (printed) before r3, no problem would happen (a.k.a NNL or Non-Lexical Lifetimes)
+
+
+----
 
 let item = [1,2]
 fn do_something(item) // value is "consumed" and gone after using it
@@ -185,4 +328,3 @@ svgo --help
 
 
 
-https://medium.com/@ajeet214/image-type-conversion-jpg-png-jpg-webp-png-webp-with-python-7d5df09394c9
