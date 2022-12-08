@@ -227,6 +227,8 @@ fn calculate_length(s: &String) -> usize { // s is a reference to a String
 } // as it is only a reference, the value is not dropped
 ```
 
+----
+
 ### Mutable References
 
 - To be able to mutate a borrowed value we have to use a `mutable reference`
@@ -289,6 +291,105 @@ There is a similar rule for working with mutable and immutable reference at the 
 ```
 - users of an immutable reference do not expect the value to suddenly change from under them.
 - if r1 and r2 were used (printed) before r3, no problem would happen (a.k.a NNL or Non-Lexical Lifetimes)
+
+----
+
+### Dangling References
+
+- A reference to a value that is no longer valid is called a `dangling reference`
+- Rust prevents dangling references
+
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String { // returns a reference to a String
+    let s = String::from("hello");
+    &s
+} // BIG FAIL: reference value is dropped
+```
+
+The correct thing is to just return the value, not the reference:
+
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> String { // returns a String
+    let s = String::from("hello");
+    s
+} // ownership is moved, nothing is deallocated
+```
+
+----
+
+## The Slice Types
+
+- Slices let you reference a contiguous sequence of elements in a collection rather than the whole collection.
+
+
+```rust
+fn main() {
+    let mut s = String::from("hello world");
+    // first_word takes an immutable reference and returns a usize index
+    let word = first_word(&s); // word will be 5
+
+    s.clear(); // empty the String, making it ""
+
+    // PROBLEM: word has value 5, but s has completely changed, so word is now invalid and there is no compile time warning
+}
+```
+
+In order to have a safer code we can use `slices`. So we can have a reference to a part of the String, and Rust will keep the string immutable until the slice is not used.
+
+```rust
+
+fn main() {
+    let mut s = String::from("hello world");
+    let word = first_word(&s);
+
+    s.clear(); // error!
+    println!("the first word is: {}", word);
+}
+
+
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+```
+ `clear` needs a mutable reference, but we already have a mutable one with the slice. We cannot have both at the same time.
+
+ Slices take the form `[starting_index..ending_index]`
+
+ The following slices are equivalent:
+
+  ```rust
+  let s = String::from("hello");
+  let len = s.len();
+
+  &s[0..2] == &s[..2]
+  &s[3..len] == &s[3..]
+  &s[0..len] == &s[..]
+  ```
+
+- String literals are slices `let s = "hello, world"`
+- Arrays also have slices:
+```rust
+let a = [1, 2, 3, 4, 5];
+let slice = &a[1..3];
+
+assert_eq!(slice, &[2, 3]);
+```
 
 
 ----
